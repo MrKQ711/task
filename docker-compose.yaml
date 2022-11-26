@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+    php-apache-environment:
+        container_name: php-apache
+        build:
+            context: ./php-apache2
+            dockerfile: Dockerfile
+        depends_on:
+          - localhost
+        volumes:
+            - ./webapp/:/var/www/html/
+        ports:
+            - 8000:80
+            
+    db:
+        container_name: localhost
+        image: mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: 
+            MYSQL_DATABASE: mystore
+            MYSQL_USER: root
+            MYSQL_PASSWORD: 
+        ports:
+            - "9906:3306"
+        volumes: 
+            - ./webapp/data/mystore.sql:/docker-entrypoint-initdb.d/dump.sql
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - '8080:80'
+        restart: always
+        environment:
+            PMA_HOST: localhost
+        depends_on:
+            - localhost
